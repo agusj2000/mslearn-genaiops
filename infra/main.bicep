@@ -16,32 +16,7 @@ param resourceGroupName string = 'rg-${environmentName}'
 @minLength(1)
 @description('Primary location for all resources')
 @allowed([
-  'australiaeast'
-  'brazilsouth'
-  'canadacentral'
-  'canadaeast'
-  'eastus'
-  'eastus2'
-  'francecentral'
-  'germanywestcentral'
-  'italynorth'
-  'japaneast'
   'koreacentral'
-  'northcentralus'
-  'norwayeast'
-  'polandcentral'
-  'southafricanorth'
-  'southcentralus'
-  'southeastasia'
-  'southindia'
-  'spaincentral'
-  'swedencentral'
-  'switzerlandnorth'
-  'uaenorth'
-  'uksouth'
-  'westus'
-  'westus2'
-  'westus3'
 ])
 param location string
 
@@ -67,10 +42,10 @@ param aiFoundryProjectName string = 'ai-project-${environmentName}'
 param aiProjectDeploymentsJson string = '''
 [
   {
-    "name": "gpt-5.1",
+    "name": "gpt-4.1-mini",
     "model": {
       "format": "OpenAI",
-      "name": "gpt-5.1"
+      "name": "gpt-4.1-mini"
     },
     "sku": {
       "name": "GlobalStandard",
