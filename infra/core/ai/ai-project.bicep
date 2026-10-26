@@ -108,7 +108,10 @@ resource project 'Microsoft.CognitiveServices/accounts/projects@2025-06-01' = {
 
 resource aiFoundryAccountCapabilityHost 'Microsoft.CognitiveServices/accounts/capabilityHosts@2025-10-01-preview' = if (enableHostedAgents) {
   name: 'agents'
-  parent: aiAccount
+  parent: aiAccount       
+  dependsOn: [
+    project
+  ]
   properties: {
     capabilityHostKind: 'Agents'
     // IMPORTANT: this is required to enable hosted agents deployment
@@ -295,6 +298,9 @@ resource modelDeployments 'Microsoft.CognitiveServices/accounts/deployments@2025
   for deployment in (deployments ?? []): {
     parent: aiAccount
     name: deployment.name
+    dependsOn: [
+      aiFoundryAccountCapabilityHost
+    ]
     sku: {
       name: deployment.sku.name
       capacity: deployment.sku.capacity
