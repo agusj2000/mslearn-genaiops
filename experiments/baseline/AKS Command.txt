@@ -1,0 +1,203 @@
+++++++++++++++++++++++++++AKS+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+"""""""""""'Login::::
+az login
+az account show --query "{Name:name, SubscriptionId:id}" --output table
+az account set --subscription "<subscription-id-or-name>" #the active subscription
+az acr login --name <registry-name> #Sign in to the registr
+az acr list --query "[].{Name:name, ResourceGroup:resourceGroup, LoginServer:loginServer}" --output table    #cek registry
+
+
+
+Login server: regakslatih-h8bafbc0cffmetgn.azurecr.io
+Resource group: rgcontainerlatih
+Subscription ID: c7d939e3-964b-4891-a6a1-472a52d06989
+registry name regcontainerlatih
+
+PS C:\Users\User> az account show --query "{Name:name, SubscriptionId:id}" --output table
+Name                SubscriptionId
+------------------  ------------------------------------
+Azure for Students  c7d939e3-964b-4891-a6a1-472a52d06989
+
+Find your registry name:::::
+az acr list --query "[].{Name:name, ResourceGroup:resourceGroup, LoginServer:loginServer}" --output table
+Name         ResourceGroup    LoginServer
+-----------  ---------------  ---------------------------------------
+regakslatih  rg-aks-latih     regakslatih-h8bafbc0cffmetgn.azurecr.io
+
+regakslatih is registry name
+
+:::::::::Push an image to the registry
+Pull>>>>>>>
+PS C:\Users\User> docker pull mcr.microsoft.com/hello-world
+Using default tag: latest
+latest: Pulling from hello-world
+Digest: sha256:92c7f9c92844bbbb5d0a101b22f7c2a7949e40f8ea90c8b3bc396879d95e899a
+Status: Image is up to date for mcr.microsoft.com/hello-world:latest
+mcr.microsoft.com/hello-world:latest
+Tag>>>>>>>>>>>>>
+PS C:\Users\User> docker tag mcr.microsoft.com/hello-world regcontainerlatih.azurecr.io/hello-world:v1
+Push>>>>>>>>>>>
+PS C:\Users\User> docker push regcontainerlatih.azurecr.io/hello-world:v1
+The push refers to repository [regcontainerlatih.azurecr.io/hello-world]
+1b930d010525: Pushed
+v1: digest: sha256:92c7f9c92844bbbb5d0a101b22f7c2a7949e40f8ea90c8b3bc396879d95e899a size: 524
+remove the registry-tagged >>>>>>>>>>>>>>>
+PS C:\Users\User> docker rmi regcontainerlatih.azurecr.io/hello-world:v1
+Untagged: regcontainerlatih.azurecr.io/hello-world:v1
+View container images>>>>>>>>>>>>>>>>>>>
+PS C:\Users\User> az acr repository list -n regcontainerlatih --output table
+Result
+-----------
+hello-world
+PS C:\Users\User> az acr repository show-tags -n regcontainerlatih --repository hello-world --output table
+Result
+--------
+v1
+Run an image from the registry>>>>>>>>>>>>>>>>
+PS C:\Users\User> az acr login --name regcontainerlatih
+Login Succeeded
+PS C:\Users\User> docker run --rm regcontainerlatih.azurecr.io/hello-world:v1
+
+Hello from Docker!
+This message shows that your installation appears to be working correctly.
+Clean up resources>>>>>>>>>>>>>>>>>>>
+#Deleting the resource group deletes the container registry and its stored images.
+PS C:\Users\User> az group delete --name rgcontainerlatih --yes --no-wait
+#delete the container registry and everything stored in it
+PS C:\Users\User> az acr delete --name regcontainerlatih --resource-group rgcontainerlatih --yes  
+
+
++++++++++++++++++++++++LOgs+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+PS C:\Users\User> az login
+Select the account you want to log in with. For more information on login with Azure CLI, see https://go.microsoft.com/fwlink/?linkid=2271136
+
+Retrieving tenants and subscriptions for the selection...
+
+[Tenant and subscription selection]
+
+No     Subscription name    Subscription ID                       Tenant
+-----  -------------------  ------------------------------------  -----------------
+[1] *  Azure for Students   c7d939e3-964b-4891-a6a1-472a52d06989  Default Directory
+
+The default is marked with an *; the default tenant is 'Default Directory' and subscription is 'Azure for Students' (c7d939e3-964b-4891-a6a1-472a52d06989).
+
+Select a subscription and tenant (Type a number or Enter for no changes): 1
+
+Tenant: Default Directory
+Subscription: Azure for Students (c7d939e3-964b-4891-a6a1-472a52d06989)
+
+[Announcements]
+With the new Azure CLI login experience, you can select the subscription you want to use more easily. Learn more about it and its configuration at https://go.microsoft.com/fwlink/?linkid=2271236
+
+If you encounter any problem, please open an issue at https://aka.ms/azclibug
+
+[Warning] The login output has been updated. Please be aware that it no longer displays the full list of available subscriptions by default.
+
+S C:\Users\User> az acr login -n regcontainerlatih
+Login Succeeded
+PS C:\Users\User> az account show --query "{Name:name, SubscriptionId:id}" --output table
+Name                SubscriptionId
+------------------  ------------------------------------
+Azure for Students  c7d939e3-964b-4891-a6a1-472a52d06989
+PS C:\Users\User> docker pull mcr.microsoft.com/hello-world
+Using default tag: latest
+latest: Pulling from hello-world
+Digest: sha256:92c7f9c92844bbbb5d0a101b22f7c2a7949e40f8ea90c8b3bc396879d95e899a
+Status: Image is up to date for mcr.microsoft.com/hello-world:latest
+mcr.microsoft.com/hello-world:latest
+PS C:\Users\User> docker tag mcr.microsoft.com/hello-world regakslatih-h8bafbc0cffmetgn.azurecr.io/hello-world:v1
+PS C:\Users\User> docker tag mcr.microsoft.com/hello-world regakslatih.azurecr.io/hello-world:v1
+PS C:\Users\User> docker tag mcr.microsoft.com/hello-world regakslatih-h8bafbc0cffmetgn.azurecr.io/hello-world:v1
+PS C:\Users\User> az account show --output table
+EnvironmentName    HomeTenantId                          IsDefault    Name                State    TenantDefaultDomain                TenantDisplayName    TenantId
+-----------------  ------------------------------------  -----------  ------------------  -------  ---------------------------------  -------------------  ------------------------------------
+AzureCloud         6c88b8bf-9202-477a-a695-600dec2ad77b  True         Azure for Students  Enabled  farhankavioutlook.onmicrosoft.com  Default Directory    6c88b8bf-9202-477a-a695-600dec2ad77b
+PS C:\Users\User> az acr list --query "[].{Name:name, ResourceGroup:resourceGroup, LoginServer:loginServer}" --output table
+Name               ResourceGroup     LoginServer
+-----------------  ----------------  ----------------------------
+regcontainerlatih  rgcontainerlatih  regcontainerlatih.azurecr.io
+PS C:\Users\User> az account list --output table
+Name                CloudName    SubscriptionId                        TenantId                              State    IsDefault
+------------------  -----------  ------------------------------------  ------------------------------------  -------  -----------
+Pay-As-You-Go       AzureCloud   336e5e98-77cc-40fb-a9b6-e90df6f5f063  edbfb18c-544c-4322-bae2-bb8623841356  Enabled  False
+Azure for Students  AzureCloud   c7d939e3-964b-4891-a6a1-472a52d06989  6c88b8bf-9202-477a-a695-600dec2ad77b  Enabled  True
+PS C:\Users\User> az account set --subscription "c7d939e3-964b-4891-a6a1-472a52d06989"
+
+PS C:\Users\User> az acr show --name regcontainerlatih --query regcontainerlatih.azurecr.io --output tsv
+PS C:\Users\User> nslookup regcontainerlatih.azurecr.io
+Server:  dns.google
+Address:  8.8.8.8
+
+Non-authoritative answer:
+Name:    r1006krc-az.koreacentral.cloudapp.azure.com
+Addresses:  64:ff9b::1429:458f
+          20.41.69.143
+Aliases:  regcontainerlatih.azurecr.io
+          krc.fe.azcr.io
+          krc-acr-reg.trafficmanager.net
+
+PS C:\Users\User> az acr check-health --name regcontainerlatih --ignore-errors --yes
+Docker daemon status: available
+Docker version: 29.8.2, build 7fc2dff, platform windows/amd64
+Docker pull of 'mcr.microsoft.com/mcr/hello-world:latest' : OK
+Azure CLI version: 2.90.0
+DNS lookup to regcontainerlatih.azurecr.io at IP 20.41.69.143 : OK
+Challenge endpoint https://regcontainerlatih.azurecr.io/v2/ : OK
+Fetch refresh token for registry 'regcontainerlatih.azurecr.io' : OK
+Fetch access token for registry 'regcontainerlatih.azurecr.io' : OK
+Note: Please run the command with the '--repository' flag to check your read and write access to a specific repository.
+2026-10-24 16:22:22.018868 An error occurred: HELM_COMMAND_ERROR
+Please verify if Helm is installed.
+
+Please refer to https://aka.ms/acr/health-check for more information.
+PS C:\Users\User> az acr login --name regcontainerlatih
+Login Succeeded
+PS C:\Users\User> docker push regcontainerlatih.azurecr.io/hello-world:v1
+The push refers to repository [regcontainerlatih.azurecr.io/hello-world]
+tag does not exist: regcontainerlatih.azurecr.io/hello-world:v1
+PS C:\Users\User> docker push regcontainerlatih.azurecr.io/hello-world:v1
+The push refers to repository [regcontainerlatih.azurecr.io/hello-world]
+tag does not exist: regcontainerlatih.azurecr.io/hello-world:v1
+PS C:\Users\User> docker images
+                                                                                                                 i Info →   U  In Use
+IMAGE                                                                                ID             DISK USAGE   CONTENT SIZE   EXTRA
+airbyte/bootloader:2.4.0                                                             d64bcf2016af       1.23GB          453MB
+airbyte/connector-sidecar:2.4.0                                                      c4ed72dcb783       1.27GB          472MB
+airbyte/container-orchestrator:2.4.0                                                 f23507b63ada       1.25GB          466MB
+airbyte/cron:2.4.0                                                                   9d131b41950a       1.25GB          464MB
+airbyte/db:1.7.0-17                                                                  627a8b880e52        398MB          111MB
+airbyte/manifest-server:7.28.2                                                       deec511b51c3       1.08GB          278MB
+airbyte/server:2.4.0                                                                 f3577020d4f3       1.34GB          507MB
+airbyte/worker:2.4.0                                                                 044022ebec45       1.27GB          474MB
+airbyte/workload-api-server:2.4.0                                                    297a4952b4ba       1.26GB          470MB
+airbyte/workload-init-container:2.4.0                                                04df249e490e       1.25GB          462MB
+airbyte/workload-launcher:2.4.0                                                      3cb89aca2440       1.27GB          474MB
+apache/kafka:4.3.1                                                                   77e3df905404        686MB          239MB    U
+hello-world:latest                                                                   11a3eb1597e8       25.9kB         9.49kB    U
+kindest/node@sha256:f226345927d7e348497136874b6d207e0b32cc52154ad8323129352923a3142f
+                                                                                     f226345927d7       1.49GB          436MB    U
+mcr.microsoft.com/hello-world:latest                                                 92c7f9c92844       11.2kB         3.01kB
+mcr.microsoft.com/mcr/hello-world:latest                                             92c7f9c92844       11.2kB         3.01kB
+nginx:latest                                                                         abe47724e466        242MB         66.3MB    U
+regakslatih-h8bafbc0cffmetgn.azurecr.io/hello-world:v1                               92c7f9c92844       11.2kB         3.01kB
+regakslatih.azurecr.io/hello-world:v1                                                92c7f9c92844       11.2kB         3.01kB
+temporalio/auto-setup:1.27.2                                                         b44cbfeb43db        680MB          202MB
+PS C:\Users\User> docker pull hello-world
+Using default tag: latest
+latest: Pulling from library/hello-world
+Digest: sha256:11a3eb1597e864c51b3f56733cb2e8a90bf0c284bfc05f9444d81c558bc848aa
+Status: Image is up to date for hello-world:latest
+docker.io/library/hello-world:latest
+PS C:\Users\User> docker tag hello-world:latest regcontainerlatih.azurecr.io/hello-world:v1
+PS C:\Users\User> az acr login --name regcontainerlatih
+Login Succeeded
+PS C:\Users\User> docker push regcontainerlatih.azurecr.io/hello-world:v1
+The push refers to repository [regcontainerlatih.azurecr.io/hello-world]
+4f55086f7dd0: Pushed
+v1: digest: sha256:d1a8d0a4eeb63aff09f5f34d4d80505e0ba81905f36158cc3970d8e07179e59e size: 1023
+
+i Info → Not all multiplatform-content is present and only the available single-platform image was pushed
+         sha256:11a3eb1597e864c51b3f56733cb2e8a90bf0c284bfc05f9444d81c558bc848aa -> sha256:d1a8d0a4eeb63aff09f5f34d4d80505e0ba81905f36158cc3970d8e07179e59e
+PS C:\Users\User> docker rmi regcontainerlatih.azurecr.io/hello-world:v1
+Untagged: regcontainerlatih.azurecr.io/hello-world:v1
+PS C:\Users\User> docker rmi regcontainerlatih.azurecr.io/hello-world:v1
